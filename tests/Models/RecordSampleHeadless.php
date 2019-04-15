@@ -19,11 +19,11 @@ class RecordSampleHeadless extends Record
 
     public function getRate()
     {
-        return (float)$this['rate'];
+        return (float)$this->attributes['rate'];
     }
 
     public function getDate()
     {
-        return new \DateTime($this['date']);
+        return new \DateTime($this->attributes['date']);
     }
 }

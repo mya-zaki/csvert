@@ -43,8 +43,6 @@ class WriteTest extends \PHPUnit\Framework\TestCase
 
         $writer->setRecords($collection);
 
-        $writer->save($this->output . '_');
-
         $expect = <<<STR
 キー	値
 キー１	10
