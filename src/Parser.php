@@ -5,6 +5,7 @@ namespace MyaZaki\Csvert;
 
 use Illuminate\Support\Collection;
 use MultibyteStringStream;
+use MyaZaki\Csvert\Record;
 
 class Parser
 {
@@ -19,17 +20,15 @@ class Parser
 
     /**
      * Create a new parser instance.
-     *
-     * @param \MyaZaki\Csvert\Record $record
      */
-    public function __construct($record)
+    public function __construct(Record $record)
     {
         MultibyteStringStream::registerStreamFilter();
 
         $this->record = $record;
     }
 
-    public function parse($filepath): Parser
+    public function parse(string $filepath): Parser
     {
         $this->filepath = $filepath;
         return $this;
@@ -87,14 +86,14 @@ class Parser
         // 回避策として、毎回openする
         $fp = $this->open();
         
-        $rowNo = 0;
+        $lineNo = 0;
         if ($this->record->header) {
             fgetcsv($fp, 0, $this->record->delimiter, $this->record->enclosure, $this->record->escape);
-            ++$rowNo;
+            ++$lineNo;
         }
         
         while (false !== $row = $this->fetch($fp)) {
-            yield $this->record->newInstance($row, ++$rowNo);
+            yield $this->record->newInstance($row, ++$lineNo);
         }
     }
 

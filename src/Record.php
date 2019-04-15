@@ -21,17 +21,18 @@ abstract class Record implements \ArrayAccess, \JsonSerializable, Arrayable, Jso
     public $columns = null;
     
     protected $attributes = [];
-    protected $rowNo = null;
+    
+    /** @var int line number when parsed csv */
+    public $lineNo = null;
 
-    public function __construct($attributes = [], $rowNo = null)
+    public function __construct(array $attributes = [])
     {
         $this->attributes = $attributes;
-        $this->rowNo = $rowNo;
     }
 
-    public function getRowNo(): int
+    public function getLineNo(): int
     {
-        return $this->rowNo;
+        return $this->lineNo;
     }
 
     public static function getWriter(): Writer
@@ -39,19 +40,21 @@ abstract class Record implements \ArrayAccess, \JsonSerializable, Arrayable, Jso
         return (new Writer(new static()));
     }
 
-    public static function parse($filepath): Parser
+    public static function parse(string $filepath): Parser
     {
         return (new Parser(new static()))->parse($filepath);
     }
 
-    public static function parseString($content): Parser
+    public static function parseString(string $content): Parser
     {
         return (new Parser(new static()))->parseString($content);
     }
     
-    public function newInstance($attributes = [], $rowNo = null): Record
+    public function newInstance(array $attributes = [], int $lineNo = null): Record
     {
-        return new static($attributes, $rowNo);
+        $instance = new static($attributes);
+        $instance->lineNo = $lineNo;
+        return $instance;
     }
 
     public function offsetExists($offset)
@@ -88,5 +91,10 @@ abstract class Record implements \ArrayAccess, \JsonSerializable, Arrayable, Jso
     public function toJson($options = 0)
     {
         return json_encode($this->jsonSerialize(), $options);
+    }
+
+    public function __toString()
+    {
+        return $this->toJson();
     }
 }

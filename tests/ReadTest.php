@@ -15,7 +15,7 @@ class ReadTest extends \PHPUnit\Framework\TestCase
 
         $result = $parser->walk(function ($record) {
             return [
-                'row'     => $record->getRowNo(),
+                'row'     => $record->getLineNo(),
                 'key'     => $record['key'],
                 'value'   => $record['value'],
                 'rate'    => $record->getRate(),
@@ -53,7 +53,7 @@ class ReadTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('キー', $header[0]);
         $this->assertSame('値', $header[1]);
 
-        $this->assertSame(3, $records[1]->getRowNo());
+        $this->assertSame(3, $records[1]->getLineNo());
         $this->assertSame('key2', $records[1]['キー']);
         $this->assertSame('value2', $records[1]['値']);
         $this->assertTrue($records->contains('キー', 'キー２'));
