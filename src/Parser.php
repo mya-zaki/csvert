@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace MyaZaki\Csvert;
 
@@ -42,10 +43,11 @@ class Parser
 
     public function get(): Collection
     {
-        $records = $this->walk(function (Record $record) {
-            return $record;
+        $records = new Collection();
+        $this->walk(function (Record $record) use (&$records) {
+            $records->push($record);
         });
-        return new Collection($records);
+        return $records;
     }
 
     /**
@@ -69,14 +71,13 @@ class Parser
     /**
      * Applies the callback to the records of the read lines
      */
-    public function walk(\Closure $callback): ?array
+    public function walk(\Closure $callback): ?bool
     {
         $records = $this->generate();
-        $return = [];
         foreach ($records as $record) {
-            $return[] = call_user_func($callback, $record);
+            call_user_func($callback, $record);
         }
-        return $return;
+        return true;
     }
 
     private function generate(): \Generator
@@ -85,13 +86,13 @@ class Parser
         // ファイルポインタを先頭に戻すと、１文字目のマルチバイト文字が文字化けすることがある
         // 回避策として、毎回openする
         $fp = $this->open();
-        
+
         $lineNo = 0;
         if ($this->record->header) {
             fgetcsv($fp, 0, $this->record->delimiter, $this->record->enclosure, $this->record->escape);
             ++$lineNo;
         }
-        
+
         while (false !== $row = $this->fetch($fp)) {
             yield $this->record->newInstance($row, ++$lineNo);
         }
@@ -106,7 +107,7 @@ class Parser
         if ($this->record->charset !== 'UTF-8') {
             stream_filter_append($fp, "convert.mbstring.UTF-8/{$this->record->charset}", STREAM_FILTER_READ);
         }
-        
+
         return $fp;
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace MyaZaki\Csvert\Tests;
 
 use MyaZaki\Csvert\Tests\Models\RecordSample;
@@ -13,8 +14,9 @@ class ReadTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNull($parser->getRawHeader());
 
-        $result = $parser->walk(function ($record) {
-            return [
+        $result = [];
+        $parser->walk(function ($record) use (&$result) {
+            $result[] = [
                 'row'     => $record->getLineNo(),
                 'key'     => $record['key'],
                 'value'   => $record['value'],
@@ -79,5 +81,20 @@ class ReadTest extends \PHPUnit\Framework\TestCase
 
         $records = $parser->get();
         $this->assertTrue($records->isEmpty());
+    }
+
+    public function testMemory()
+    {
+        $parser = RecordSample::parse('tests/files/sample_large.csv');
+
+        $parser->walk(function ($record) {
+            $key = $record['キー'];
+            $value = $record['値'];
+        });
+
+        $this->markTestSkipped(
+            "[memory usage]：" . memory_get_usage() / (1024 * 1024) . "MB\n"
+                . "[memory peak usage]：" . memory_get_peak_usage() / (1024 * 1024) . "MB\n"
+        );
     }
 }
