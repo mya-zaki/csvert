@@ -70,9 +70,10 @@ Code,Street,City,State
 
 ```
 $parser = PostalCode::parse($filepath);
-$address_list = $parser->walk(function ($record) { // Call user function each line
+$address_list = [];
+$parser->walk(function ($record) use (&$address_list) { // Call user function each line
     // Given Record instance
-    return $record['Code'] . ' ' . $record->getAddress();
+    $address_list[] = $record['Code'] . ' ' . $record->getAddress();
 });
 ```
 
