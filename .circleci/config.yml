@@ -5,23 +5,24 @@
 version: 2
 jobs:
   build:
-    docker:
-      - image: circleci/php:7.3
+    machine:
+      image: circleci/classic:edge
     steps:
       - checkout
+      - run: docker-compose build
 
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "composer.json" }}
             - v1-dependencies-
 
-      - run: composer install -n --prefer-dist
+      - run: docker-compose run php composer install -n --prefer-dist
 
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
 
-      - run: composer test
+      - run: docker-compose run php composer test
 
-      - run: composer check-style
+      - run: docker-compose run php composer lint
