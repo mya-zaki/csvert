@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace MyaZaki\Csvert;
 
@@ -19,9 +20,9 @@ abstract class Record implements \ArrayAccess, \JsonSerializable, Arrayable, Jso
     public $header = true;
 
     public $columns = null;
-    
+
     protected $attributes = [];
-    
+
     /** @var int line number when parsed csv */
     public $lineNo = null;
 
@@ -49,7 +50,7 @@ abstract class Record implements \ArrayAccess, \JsonSerializable, Arrayable, Jso
     {
         return (new Parser(new static()))->parseString($content);
     }
-    
+
     public function newInstance(array $attributes = [], int $lineNo = null): Record
     {
         $instance = new static($attributes);

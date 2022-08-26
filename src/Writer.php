@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace MyaZaki\Csvert;
 
@@ -37,14 +38,14 @@ class Writer
     {
         fseek($this->tmp, $this->offset);
         ftruncate($this->tmp, $this->offset);
-        
+
         $recordClass = get_class($this->record);
 
         foreach ($records as $record) {
             if (!($record instanceof $recordClass)) {
                 throw new Exception('must be of the type ' . $recordClass);
             }
-            
+
             if (empty($record->columns)) {
                 $fields = $record->toArray();
             } else {
